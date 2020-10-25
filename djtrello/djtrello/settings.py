@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'boards',
     'lists',
+    'cards',
     'authentication',
     'rest_framework',
     'django.contrib.admin',

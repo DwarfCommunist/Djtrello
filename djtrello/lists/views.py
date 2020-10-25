@@ -17,7 +17,6 @@ class ListsManager(APIView):
 
     def get(self, request, format='json'):
         current_user = request.user
-        print(request.data)
         board_id = request.data['board_id']
         lists = models.List.objects.filter(board__id=board_id,
                                            board__user=current_user)
