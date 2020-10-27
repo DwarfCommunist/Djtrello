@@ -21,5 +21,6 @@ urlpatterns = [
     path('api/', include('authentication.urls')),
     path('api/', include('boards.urls')),
     path('api/', include('lists.urls')),
-    path('api/', include('cards.urls'))
+    path('api/', include('cards.urls')),
+    path('', include('frontend.urls'))
 ]

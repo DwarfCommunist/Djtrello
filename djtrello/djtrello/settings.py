@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'lists',
     'cards',
     'authentication',
+    'frontend',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
