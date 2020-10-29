@@ -1,36 +1,62 @@
-import React, { Component } from "react";
+import React, {Component, useState} from "react";
+import {Button, FormControl, FormGroup} from "react-bootstrap";
+import axiosInstance from "../axiosApi";
+import {Redirect} from 'react-router'
 
-export default class SignUp extends Component {
-    render() {
+export default function SignUp() {
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [successful, setSuccessful] = useState(false);
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        axiosInstance.post('/auth/register', {
+            username: username,
+            password: password
+        }).then(
+            result => {
+                setSuccessful(true)
+            }
+        ).catch(error => {
+            throw error;
+        })
+    }
+
+    function validateForm() {
+        return username.length > 0 && password.length > 0;
+    }
+
+    function returnRegistration() {
         return (
-            <form>
-                <h3>Register</h3>
-
-                <div className="form-group">
-                    <label>First name</label>
-                    <input type="text" className="form-control" placeholder="First name" />
+            <div className="outer">
+                <div className="inner">
+                    <div className="SignUp">
+                        <h3>Register</h3>
+                        <form onSubmit={handleSubmit}>
+                            <FormGroup controlId="username" bsSize="large">
+                                <FormControl
+                                    autoFocus
+                                    value={username}
+                                    onChange={e => setUsername(e.target.value)}
+                                />
+                            </FormGroup>
+                            <FormGroup controlId="password" bsSize="large">
+                                <FormControl
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    type="password"
+                                />
+                            </FormGroup>
+                            <Button block bsSize="large" disabled={!validateForm()} type="submit">
+                                Register
+                            </Button>
+                        </form>
+                    </div>
                 </div>
-
-                <div className="form-group">
-                    <label>Last name</label>
-                    <input type="text" className="form-control" placeholder="Last name" />
-                </div>
-
-                <div className="form-group">
-                    <label>Email</label>
-                    <input type="email" className="form-control" placeholder="Enter email" />
-                </div>
-
-                <div className="form-group">
-                    <label>Password</label>
-                    <input type="password" className="form-control" placeholder="Enter password" />
-                </div>
-
-                <button type="submit" className="btn btn-dark btn-lg btn-block">Register</button>
-                <p className="forgot-password text-right">
-                    Already registered <a href="#">log in?</a>
-                </p>
-            </form>
+            </div>
         );
     }
+
+    return !successful ? returnRegistration() : <Redirect to="/login"/>;
 }
