@@ -1,24 +1,81 @@
 import React, {useState, useEffect} from 'react';
+import {Grid, Paper, Typography} from "@material-ui/core";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import SimpleModal from "./SimpleModal";
+import Button from "@material-ui/core/Button";
 import axiosInstance from '../axiosApi';
 
 export default function Dashboard() {
     const [list, setList] = useState([]);
 
     useEffect(() => {
-        localStorage.removeItem('refresh_token')
         axiosInstance.get('/board/list')
             .then((result) => {
-                console.log(result.data.boards);
-                setList(result.data.boards)
+                setList(result.data.boards);
             });
     }, [])
 
 
+    function deleteBoard(id, index) {
+        axiosInstance.delete('/board/delete/' + id)
+            .then(
+                result => {
+                    const array = list;
+                    array.splice(index, 1);
+                    console.log(array);
+                    setList(oldArray => [...array]);
+                }
+            ).catch(error => {
+            throw error;
+        });
+    }
+
+    function createBoard(name) {
+        console.log(name);
+        axiosInstance.post('/board/create', {
+            name: name
+        }).then(
+            result => {
+                setList(oldArray => [...oldArray, result.data]);
+            }
+        ).catch(error => {
+            throw error;
+        });
+
+    }
+
     return (
-        <div>
-            <ul>
-                {list && list.map((tdd) => <li key={tdd.id}>{tdd.name}</li>)}
-            </ul>
+        <div style={{marginTop: 20, padding: 30}}>
+            <Grid container spacing={10} justify="center">
+                {list.map((board, index) => (
+                    <Grid item key={board.id}>
+                        <Card>
+                            <CardActionArea>
+                                <CardContent>
+                                    <Typography gutterBottom variant="h5" component="h2">
+                                        {board.name}
+                                    </Typography>
+                                </CardContent>
+                            </CardActionArea>
+                            <CardActions>
+                                <Button size="small" onClick={() => deleteBoard(board.id, index)}>
+                                    Delete
+                                </Button>
+                            </CardActions>
+                        </Card>
+                    </Grid>
+                ))}
+                <Grid item key="create_board">
+                    <Card>
+                        <CardActions>
+                            <SimpleModal message={'kek'} createBoard={createBoard}/>
+                        </CardActions>
+                    </Card>
+                </Grid>
+            </Grid>
         </div>
     );
 }
