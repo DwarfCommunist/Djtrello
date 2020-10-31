@@ -4,11 +4,13 @@ import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
-import SimpleModal from "./SimpleModal";
+import CreateBoardModal from "./CreateBoardModal";
 import Button from "@material-ui/core/Button";
 import axiosInstance from '../axiosApi';
+import {useHistory} from "react-router-dom";
 
 export default function Dashboard() {
+    const history = useHistory();
     const [list, setList] = useState([]);
 
     useEffect(() => {
@@ -44,7 +46,13 @@ export default function Dashboard() {
         ).catch(error => {
             throw error;
         });
+    }
 
+    function showBoard(id) {
+        history.push({
+            pathname: 'board/' + id,
+            state: {boardId: id}
+        })
     }
 
     return (
@@ -53,7 +61,7 @@ export default function Dashboard() {
                 {list.map((board, index) => (
                     <Grid item key={board.id}>
                         <Card>
-                            <CardActionArea>
+                            <CardActionArea onClick={() => showBoard(board.id)}>
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="h2">
                                         {board.name}
@@ -71,7 +79,7 @@ export default function Dashboard() {
                 <Grid item key="create_board">
                     <Card>
                         <CardActions>
-                            <SimpleModal message={'kek'} createBoard={createBoard}/>
+                            <CreateBoardModal createBoard={createBoard}/>
                         </CardActions>
                     </Card>
                 </Grid>

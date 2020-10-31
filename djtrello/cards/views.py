@@ -16,9 +16,8 @@ class CardsManager(APIView):
                        'cards': serializer.data}
         return result_json
 
-    def get(self, request, format='json'):
+    def get(self, request, list_id, format='json'):
         current_user = request.user
-        list_id = request.data['list_id']
         cards = get_list_or_404(models.Card,
                                 list__id=list_id,
                                 list__board__user=current_user)

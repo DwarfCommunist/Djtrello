@@ -15,9 +15,9 @@ class ListsManager(APIView):
                        'lists': serializer.data}
         return result_json
 
-    def get(self, request, format='json'):
+    def get(self, request, id, format='json'):
+        board_id = id
         current_user = request.user
-        board_id = request.data['board_id']
         lists = models.List.objects.filter(board__id=board_id,
                                            board__user=current_user)
         result_json = self.__get_board_lists_json(board_id, lists)
@@ -37,10 +37,8 @@ class ListsManager(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, format='json'):
+    def delete(self, request, board_id, list_id, format='json'):
         current_user = request.user
-        board_id = request.data['board_id']
-        list_id = request.data['list_id']
         list = get_object_or_404(models.List,
                                  id=list_id,
                                  board__id=board_id,

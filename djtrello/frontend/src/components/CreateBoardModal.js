@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function SimpleModal(props) {
+export default function CreateBoardModal(props) {
     const classes = useStyles();
     const [name, setName] = React.useState("");
     const [modalStyle] = React.useState(getModalStyle);
@@ -54,7 +54,7 @@ export default function SimpleModal(props) {
     return (
         <div>
             <Button variant="contained" color="primary" onClick={handleOpen}>
-                {props.message}
+                Create new board
             </Button>
 
             <Modal

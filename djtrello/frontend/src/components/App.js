@@ -8,6 +8,7 @@ import Login from './Login';
 import SignUp from './Signup';
 import Navbar from "./Navbar";
 import Dashboard from "./Dashboard";
+import TrelloBoard from "./TrelloComponent/TrelloBoard";
 
 
 const PrivateRoute = ({component: Component, ...rest}) => (
@@ -33,9 +34,8 @@ const AuthRoute = ({component: Component, ...rest}) => (
             : <Redirect to='/dashboard'/>
     )}/>
 )
+
 function App() {
-
-
     return (
         <Router>
             <Navbar/>
@@ -43,7 +43,8 @@ function App() {
                 <Switch>
                     <AuthRoute path="/login" component={Login}/>
                     <Route path="/register" component={SignUp}/>
-                    <PrivateRoute path='/dashboard' component={Dashboard}/>
+                    <PrivateRoute exact path='/dashboard/board/:id' component={TrelloBoard}/>
+                    <PrivateRoute exact path='/dashboard' component={Dashboard}/>
                     <DefaultRoute/>
                 </Switch>
             </div>

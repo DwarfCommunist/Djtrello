@@ -20,7 +20,6 @@ export default class Navbar extends Component {
                                 Login
                             </Link>
                         </li>
-
                         <li className="nav-item">
                             <Link to={"/register"} className="nav-link">
                                 Sign Up
