@@ -4,10 +4,6 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 
-function rand() {
-    return Math.round(Math.random() * 20) - 10;
-}
-
 function getModalStyle() {
     const top = 50;
     const left = 50;
@@ -33,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function CreateBoardModal(props) {
+export default function TrelloActionButton(props) {
     const classes = useStyles();
     const [name, setName] = React.useState("");
     const [modalStyle] = React.useState(getModalStyle);
@@ -47,14 +43,14 @@ export default function CreateBoardModal(props) {
         setOpen(false);
     };
 
-    const createBoard = () => {
-        props.createBoard(name);
+    const createObject = () => {
+        props.action(name);
     };
 
     return (
         <div>
             <Button variant="contained" color="primary" onClick={handleOpen}>
-                Create new board
+                {props.title}
             </Button>
 
             <Modal
@@ -64,7 +60,7 @@ export default function CreateBoardModal(props) {
                 onClose={handleClose}
             >
                 <div style={modalStyle} className={classes.paper}>
-                    <h2>Create new board</h2>
+                    <h2>{props.title}</h2>
                     <TextField
                         variant="outlined"
                         margin="normal"
@@ -80,8 +76,8 @@ export default function CreateBoardModal(props) {
                             setName(value);
                         }}
                     />
-                    <Button size="small" onClick={() => createBoard()}>
-                        Create Board
+                    <Button size="small" onClick={() => createObject()}>
+                        {props.title}
                     </Button>
 
                 </div>

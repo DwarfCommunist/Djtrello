@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axiosInstance from "../../axiosApi";
 import TrelloCard from "./TrelloCard";
+import TrelloActionButton from "./TrelloActionButton";
 
 export default function TrelloList(props) {
 
@@ -15,12 +16,26 @@ export default function TrelloList(props) {
         });
     }, [])
 
+    function createCard(name) {
+        axiosInstance.post('/card/create', {
+            list_id: listId,
+            name: name
+        }).then(
+            result => {
+                setList(oldArray => [...oldArray, result.data]);
+            }
+        ).catch(error => {
+            throw error;
+        });
+    }
+
     return (
         <div style={styles.container}>
             <h4>{title}</h4>
             {list.map(card => (
                 <TrelloCard key={card.id} text={card.name}/>
             ))}
+            <TrelloActionButton title='Create Card' action={createCard} />
         </div>
     );
 }
