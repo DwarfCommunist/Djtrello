@@ -7,10 +7,9 @@ import CardContent from "@material-ui/core/CardContent";
 import CreateBoardModal from "./CreateBoardModal";
 import Button from "@material-ui/core/Button";
 import axiosInstance from '../axiosApi';
-import {useHistory} from "react-router-dom";
 
-export default function Dashboard() {
-    const history = useHistory();
+export default function Dashboard(props) {
+    console.log(props);
     const [list, setList] = useState([]);
 
     useEffect(() => {
@@ -49,10 +48,8 @@ export default function Dashboard() {
     }
 
     function showBoard(id) {
-        history.push({
-            pathname: 'board/' + id,
-            state: {boardId: id}
-        })
+        window.location.href = 'dashboard/board/' + id;
+        
     }
 
     return (

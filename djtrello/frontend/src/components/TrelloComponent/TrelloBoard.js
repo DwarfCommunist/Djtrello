@@ -12,7 +12,9 @@ const ListsContainer = styled.div`
 
 export default function TrelloBoard(props) {
 
-    const boardId = props.location.state.boardId;
+
+    const {id: boardId} = props.match.params;
+
     const [list, setList] = useState([]);
 
     useEffect(() => {
