@@ -104,6 +104,33 @@ export default function TrelloBoard(props) {
         });
     }
 
+    function deleteList(list_id, index) {
+        axiosInstance.delete('list/delete/board_id/' + boardId + '/list_id/' + list_id)
+            .then(
+                result => {
+                     list.splice(index, 1);
+                     setList(oldArray => [...oldArray]);
+                }
+            ).catch(error => {
+            throw error;
+        });
+    }
+
+    function deleteCard(card_id, listIndex, index) {
+        axiosInstance.delete('/card/delete/'+ card_id, {
+            board_id: boardId,
+            name: name
+        }).then(
+            result => {
+                const obj = list[listIndex]
+                obj.cards.splice(index, 1);
+                setList(oldArray => [...oldArray]);
+            }
+        ).catch(error => {
+            throw error;
+        });
+    }
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="all-lists" direction="horizontal" type="list">
@@ -114,6 +141,8 @@ export default function TrelloBoard(props) {
                     >
                         {list.map((list, index) => (
                             <TrelloList
+                                deleteCard={deleteCard}
+                                deleteList={deleteList}
                                 createCard={createCard}
                                 cards={list.cards}
                                 list={list}

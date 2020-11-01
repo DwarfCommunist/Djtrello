@@ -40,6 +40,14 @@ export default function TrelloList(props) {
         props.createCard(name, props.index);
     }
 
+    function deleteList(index) {
+        props.deleteList(listId, index);
+    }
+
+    function deleteCard(cardId, index) {
+        props.deleteCard(cardId, props.index, index);
+    }
+
     return (
         <Draggable draggableId={String(listId)} index={props.index}>
             {provided => (
@@ -53,13 +61,14 @@ export default function TrelloList(props) {
                             <div>
                                 <TitleContainer>
                                     <ListTitle>{title}</ListTitle>
-                                    <Button>
+                                    <Button onClick={() => deleteList(props.index)}>
                                         delete
                                     </Button>
                                 </TitleContainer>
                                 <div {...provided.droppableProps} ref={provided.innerRef}>
                                     {props.cards.map((card, index) => (
                                         <TrelloCard
+                                            deleteCard={deleteCard}
                                             key={card.id}
                                             index={index}
                                             text={card.name}

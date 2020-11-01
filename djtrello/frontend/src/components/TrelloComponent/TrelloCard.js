@@ -15,6 +15,10 @@ const CardContainer = styled.div`
 
 export default function TrelloCard(props) {
 
+    function deleteCard() {
+        props.deleteCard(props.id, props.index)
+    }
+
     return (
         <Draggable draggableId={"Card" + String(props.id)} index={props.index}>
         {provided => (
@@ -25,7 +29,7 @@ export default function TrelloCard(props) {
             onDoubleClick={() => setIsEditing(true)}
           >
             <Card>
-              <Button >
+              <Button onClick={() => deleteCard()}>
                 delete
               </Button>
 

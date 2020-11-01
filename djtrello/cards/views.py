@@ -38,9 +38,8 @@ class CardsManager(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, format='json'):
+    def delete(self, request, card_id, format='json'):
         current_user = request.user
-        card_id = request.data['card_id']
         card = get_object_or_404(models.Card,
                                  id=card_id,
                                  list__board__user=current_user)
