@@ -3,6 +3,12 @@ import TrelloList from "./TrelloList";
 import axiosInstance from "../../axiosApi";
 import TrelloActionButton from "./TrelloActionButton";
 import {DragDropContext, Droppable} from "react-beautiful-dnd";
+import styled from "styled-components";
+
+const ListsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
 
 export default function TrelloBoard(props) {
 
@@ -27,28 +33,46 @@ export default function TrelloBoard(props) {
         })
     }
 
+    function moveCard(list, card, index) {
+        axiosInstance.post('/card/move', {
+              "board_id": boardId,
+              "new_list_id": list.id,
+              "card_id": card.id,
+              "position": index
+        }).catch(error => {
+            throw error;
+        })
+    }
 
     function onDragEnd(result) {
 
-        console.log(list);
-        const {destination, source, draggableId, type} = result;
+        console.log(result);
+        const {destination, source, type} = result;
 
         if (!destination) {
             return;
         }
+        const destinationIndex = destination.index;
+        const sourceIndex = source.index;
 
-        if (type === 'list') {
+        const destinationId = destination.droppableId;
+        const sourceId = source.droppableId;
+
+        if (type == 'list') {
             const newArray = list;
-
-            const destinationIndex = destination.index;
-            const sourceIndex = source.index;
             const obj = newArray[sourceIndex];
             newArray.splice(sourceIndex, 1);
             newArray.splice(destinationIndex, 0, obj);
             setList(newArray);
             moveList(obj, destinationIndex);
         } else {
-
+            const sourceList = list.find(x => x.id == sourceId);
+            const destinationList = list.find(x => x.id == destinationId);
+            const obj = sourceList.cards[sourceIndex];
+            sourceList.cards.splice(sourceIndex, 1);
+            destinationList.cards.splice(destinationIndex, 0, obj);
+            setList(oldArray => [...oldArray]);
+            moveCard(destinationList, obj, destinationIndex);
         }
     }
 
@@ -84,7 +108,10 @@ export default function TrelloBoard(props) {
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="all-lists" direction="horizontal" type="list">
                 {provided => (
-                    <div {...provided.droppableProps} ref={provided.innerRef} style={styles.listsContainer}>
+                    <ListsContainer
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                    >
                         {list.map((list, index) => (
                             <TrelloList
                                 createCard={createCard}
@@ -98,20 +125,9 @@ export default function TrelloBoard(props) {
                         ))}
                         {provided.placeholder}
                         <TrelloActionButton title='Create List' action={createList}/>
-                    </div>
+                    </ListsContainer>
                 )}
             </Droppable>
         </DragDropContext>
     );
 }
-
-const styles = {
-    listsContainer: {
-        display: "flex",
-        flexDirection: "row"
-    }
-};
-
-const mapStateToProps = state => ({
-    lists: state.lists
-});
