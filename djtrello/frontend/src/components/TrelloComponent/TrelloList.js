@@ -2,41 +2,53 @@ import React, {useEffect, useState} from "react";
 import axiosInstance from "../../axiosApi";
 import TrelloCard from "./TrelloCard";
 import TrelloActionButton from "./TrelloActionButton";
+import {Droppable, Draggable, DragDropContext} from "react-beautiful-dnd";
 
 export default function TrelloList(props) {
 
     const title = props.title;
     const listId = props.listId;
-    const [list, setList] = useState([]);
-
-    useEffect(() => {
-        axiosInstance.get('/card/list/' + listId).then((result) => {
-            console.log(result.data);
-            setList(result.data.cards);
-        });
-    }, [])
 
     function createCard(name) {
-        axiosInstance.post('/card/create', {
-            list_id: listId,
-            name: name
-        }).then(
-            result => {
-                setList(oldArray => [...oldArray, result.data]);
-            }
-        ).catch(error => {
-            throw error;
-        });
+        props.createCard(name, props.index);
     }
 
     return (
-        <div style={styles.container}>
-            <h4>{title}</h4>
-            {list.map(card => (
-                <TrelloCard key={card.id} text={card.name}/>
-            ))}
-            <TrelloActionButton title='Create Card' action={createCard} />
-        </div>
+        <Draggable draggableId={String(listId)} index={props.index}>
+            {provided => (
+                <div
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    ref={provided.innerRef}
+                >
+                    <Droppable droppableId={String(listId)} type="card">
+                        {provided => (
+                            <div style={styles.container}>
+                                <h3>{title}</h3>
+                            <div
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                                style={styles.container}
+                            >
+                                {props.cards.map((card, index) => (
+                                    <TrelloCard
+                                        key={card.id}
+                                        index={index}
+                                        text={card.name}
+                                        id={card.id}
+                                    />
+                                ))}
+                                {provided.placeholder}
+                                <TrelloActionButton title='Create Card' action={createCard}/>
+                            </div>
+                            </div>
+                        )}
+                    </Droppable>
+
+                </div>
+            )}
+        </Draggable>
+
     );
 }
 
@@ -44,9 +56,16 @@ const styles = {
     container: {
         backgroundColor: "#dfe3e6",
         borderRadius: 3,
+        width: 300
+    },
+    listsContainer: {
+        backgroundColor: "#dfe3e6",
+        borderRadius: 3,
         width: 300,
-        padding: 8,
-        marginRight: 8
+        height: "100%"
+    },
+    title: {
+        backgroundColor: "#dfe3e6"
     }
 };
 
